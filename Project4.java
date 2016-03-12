@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 class Project4 {
   public static void main(String[] args) {
-    String test = "(a-b*c)/d-e*(f+g)";
+    String test = "(a+b)/c*(d-e)+f/g";
     System.out.println("infix:     " + test);
     System.out.println("postfix:   " + postfix(test));
     System.out.println("prefix:    " + prefix(test));
@@ -39,39 +39,67 @@ class Project4 {
     }
 
     while (!ns.isEmpty()) {
+
+      // check for left over parenthesis here
+
       output += ns.pop();
     }
 
     return output;
   }
 
-  static String prefix(String infix) {
+  static String prefix(String s) {
     String output = "";
     NodeStack<String> operands = new NodeStack<String>();
     NodeStack<Character> operators = new NodeStack<Character>();
     char[] infix = s.toCharArray();
 
     for (char c: infix) {
+      char op = ' ';
+      String left = "";
+      String right = "";
+      String combine = "";
       switch(c) {
         case '(':
+          operators.push(c);
           break;
         case ')':
+          while (!operators.top().equals('(')) {
+            op = operators.pop();
+            right = operands.pop();
+            left = operands.pop();
+            combine = op + left + right;
+            operands.push(combine);
+          }
+          operators.pop();
           break;
         case '*':
         case '/':
         case '+':
         case '-':
+          while (!operators.isEmpty() && precedence(c) <= precedence(operators.top())) {
+            op = operators.pop();
+            right = operands.pop();
+            left = operands.pop();
+            combine = op + left + right;
+            operands.push(combine);
+          }
+          operators.push(c);
           break;
         default:
-          output += c;
+          operands.push(String.valueOf(c));
       }
     }
 
-    /*
-    while (!ns.isEmpty()) {
-      output += ns.pop();
+    while (!operators.isEmpty()) {
+      char op = operators.pop();
+      String right = operands.pop();
+      String left = operands.pop();
+      String combine = op + left + right;
+      operands.push(combine);
     }
-    */
+
+    output = operands.pop();
 
     return output;
   }

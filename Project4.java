@@ -2,10 +2,25 @@ import java.util.Scanner;
 
 class Project4 {
   public static void main(String[] args) {
-    String test = "(a+b)/c*(d-e)+f/g";
-    System.out.println("infix:     " + test);
-    System.out.println("postfix:   " + postfix(test));
-    System.out.println("prefix:    " + prefix(test));
+    Scanner sc = new Scanner(System.in);
+    while (true) {
+      System.out.println("Please enter an infix expression: ");
+      System.out.print("> ");
+      String infix = sc.nextLine();
+
+      infix = infix.replaceAll("\\s+", "");
+      
+      if (infix.isEmpty()) {
+        System.out.println("Exiting program...");
+        System.exit(0);
+      }
+
+      System.out.println();
+      System.out.println("infix:     " + infix);
+      System.out.println("postfix:   " + postfix(infix));
+      System.out.println("prefix:    " + prefix(infix));
+      System.out.println();
+    }
   }
 
   static String postfix(String s) {
@@ -19,6 +34,10 @@ class Project4 {
           ns.push(c);
           break;
         case ')':
+          if (!ns.contains('(')) {
+            System.out.println("ERROR: extra parenthesis found. Exiting program.");
+            System.exit(1);
+          }
           while(!ns.top().equals('(')) {
             output += ns.pop();
           }
@@ -39,9 +58,10 @@ class Project4 {
     }
 
     while (!ns.isEmpty()) {
-
-      // check for left over parenthesis here
-
+      if (ns.top().equals('(') || ns.top().equals(')')) {
+        System.out.println("ERROR: extra parenthesis found. Exiting program.");
+        System.exit(1);
+      }
       output += ns.pop();
     }
 
@@ -64,6 +84,10 @@ class Project4 {
           operators.push(c);
           break;
         case ')':
+          if (!operators.contains('(')) {
+            System.out.println("ERROR: extra parenthesis found. Exiting program.");
+            System.exit(1);
+          }
           while (!operators.top().equals('(')) {
             op = operators.pop();
             right = operands.pop();
@@ -92,6 +116,12 @@ class Project4 {
     }
 
     while (!operators.isEmpty()) {
+      // check for left over parenthesis here
+      if (operators.top().equals('(')) {
+        System.out.println("ERROR: extra parenthesis found. Exiting program.");
+        System.exit(1);
+      }
+
       char op = operators.pop();
       String right = operands.pop();
       String left = operands.pop();

@@ -16,6 +16,18 @@ public class NodeStack<E> implements Stack<E> {
     return false;
   }
 
+  public boolean contains(E elem) {
+    if (top == null) return false;
+    Node<E> temp = top;
+    while (temp != null) {
+      if (temp.element.equals(elem)) {
+        return true;
+      }
+      temp = temp.next;
+    }
+    return false;
+  }
+
   public void push(E elem) {
     if (top == null) {
       top = new Node<E>(elem, null);
@@ -44,7 +56,7 @@ public class NodeStack<E> implements Stack<E> {
     } else {
       top = top.next;
     }
-    
+
     size--;
     return temp;
   }
